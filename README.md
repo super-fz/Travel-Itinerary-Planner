@@ -1,5 +1,5 @@
 # Travel-Itinerary-Planner
-A web app that allows users to create, organize, and manage travel itineraries by inputting destinations, activities, and dates. Features include drag-and-drop scheduling, weather forecasts, and local notes, all stored locally for easy access and editing. Built with TypeScript for type safety and maintainability.
+A web app that allows users to create, organize, and manage travel itineraries by inputting destinations, activities, and dates. Features include drag-and-drop scheduling, weather forecasts, and local notes, all stored locally for easy access and editing.
 
 Tech Stack:
 
@@ -9,3 +9,12 @@ Tech Stack:
 <img src ="https://github.com/user-attachments/assets/74c98220-8d26-44c9-b021-487035464433" height = "55">
 <img src ="https://github.com/user-attachments/assets/c5064ede-1a89-410b-ad57-a3e4f0e07abb" height = "65">
 
+
+
+
+Built with <b>TypeScript</b> to:
+
+Define clear data models for trips, destinations, activities, and dates with TypeScript interfaces.
+Manage UI state and event handling with strong typing to reduce runtime errors.
+Enhance maintainability, type safety and scalability for future features like sharing itineraries or syncing with calendars.
+Build a reactive, user-friendly interface with TypeScript and native DOM APIs or lightweight
