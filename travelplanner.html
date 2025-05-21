@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Travel Itinerary Planner</title>
+<style>
+  :root {
+    --primary-color: #1e88e5;
+    --background: #f9fafd;
+    --card-bg: #ffffff;
+    --border-color: #ddd;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-family);
+    background: var(--background);
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+  }
+  main {
+    flex: 1;
+    max-width: 900px;
+    margin: 2rem auto;
+    width: 95%;
+  }
+  h2 {
+    color: var(--primary-color);
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 0.05);
+  }
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+  }
+  label {
+    flex: 1 1 150px;
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  input, button, select, textarea {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    font-family: var(--font-family);
+  }
+  input[type="date"] {
+    max-width: 180px;
+  }
+  select {
+    max-width: 180px;
+  }
+  button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+    min-width: 120px;
+    border-radius: 6px;
+  }
+  button:hover {
+    background: #1565c0;
+  }
+  .destinations-list {
+    margin-top: 1rem;
+  }
+  .destination {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #fff;
+  }
+  .destination-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .destination-header > h3 {
+    margin: 0;
+  }
+  .destination-dates {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 0.1rem;
+  }
+  .activities-list {
+    margin-top: 1rem;
+    list-style: none;
+    padding-left: 0;
+    border-top: 1px solid var(--border-color);
+  }
+  .activity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .activity-info {
+    flex: 1 1 auto;
+    padding-right: 1rem;
+  }
+  .activity-time {
+    font-weight: 700;
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+  }
+  .btn-small {
+    background: #e0e0e0;
+    color: #444;
+    border: none;
+    border-radius: 4px;
+    padding: 0.3rem 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    margin-left: 0.25rem;
+  }
+  .btn-small:hover {
+    background: #ccc;
+  }
+  .notes-textarea {
+    width: 100%;
+    margin-top: 0.5rem;
+    min-height: 60px;
+    resize: vertical;
+  }
+  .weather-info {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #666;
+  }
+  @media (max-width: 600px) {
+    form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    label {
+      flex: 1 1 auto;
+    }
+    .destination-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .destination-header > * {
+      margin-bottom: 0.3rem;
+    }
+    .activity-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .btn-small {
+      margin-left: 0;
+      margin-top: 0.4rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>Travel Itinerary Planner</header>
+<main>
+  <section class="card" aria-label="Add new destination and travel dates">
+    <h2>Add Destination</h2>
+    <form id="addDestinationForm" aria-describedby="destinationFormDesc">
+      <label>
+        Destination Name
+        <input type="text" id="destinationName" required placeholder="e.g. Paris" />
+      </label>
+      <label>
+        Arrival Date
+        <input type="date" id="arrivalDate" required />
+      </label>
+      <label>
+        Departure Date
+        <input type="date" id="departureDate" required />
+      </label>
+      <button type="submit" aria-label="Add destination">Add Destination</button>
+      <p id="destinationFormDesc" style="font-size:0.85rem; color:#666; margin-top:0.5rem;">
+        Add a destination with arrival and departure dates to build your travel itinerary.
+      </p>
+    </form>
+  </section>
+
+  <section class="card" aria-label="Travel itinerary overview">
+    <h2>Your Itinerary</h2>
+    <div id="destinationsList" class="destinations-list" aria-live="polite" aria-relevant="additions removals"></div>
+  </section>
+</main>
+
+<script type="module">
+  interface Activity {
+    id: string;
+    time: string; // HH:mm format
+    description: string;
+    notes: string;
+  }
+
+  interface Destination {
+    id: string;
+    name: string;
+    arrivalDate: string; // ISO date string
+    departureDate: string; // ISO date string
+    activities: Activity[];
+    notes: string;
+  }
+
+  // Simple utility function to generate IDs
+  function generateId() {
+    return Math.random().toString(36).substr(2, 9);
+  }
+
+  // Format date string to human-readable format
+  function formatDate(isoStr: string) {
+    const d = new Date(isoStr);
+    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  // Load saved data or init empty
+  let destinations: Destination[] = [];
+
+  // Save to localStorage
+  function saveData() {
+    localStorage.setItem('travel_itinerary', JSON.stringify(destinations));
+  }
+
+  // Load from localStorage
+  function loadData() {
+    const stored = localStorage.getItem('travel_itinerary');
+    if (stored) {
+      try {
+        destinations = JSON.parse(stored) as Destination[];
+      } catch {
+        destinations = [];
+      }
+    }
+  }
+
+  // Main container
+  const destinationsListEl = document.getElementById('destinationsList')!;
+  const addDestinationForm = document.getElementById('addDestinationForm') as HTMLFormElement;
+  const destinationNameInput = document.getElementById('destinationName') as HTMLInputElement;
+  const arrivalDateInput = document.getElementById('arrivalDate') as HTMLInputElement;
+  const departureDateInput = document.getElementById('departureDate') as HTMLInputElement;
+
+  // Render the list of destinations
+  function renderDestinations() {
+    destinationsListEl.innerHTML = '';
+    if (destinations.length === 0) {
+      destinationsListEl.innerHTML = '<p>You have not added any destinations yet.</p>';
+      return;
+    }
+
+    destinations.forEach(dest => {
+      const destEl = document.createElement('section');
+      destEl.className = 'destination';
+      destEl.setAttribute('data-id', dest.id);
+      destEl.setAttribute('aria-label', `Destination ${dest.name}`);
+
+      // Destination header with name and dates + remove button
+      const header = document.createElement('div');
+      header.className = 'destination-header';
+
+      const title = document.createElement('h3');
+      title.textContent = dest.name;
+      header.appendChild(title);
+
+      const dates = document.createElement('div');
+      dates.className = 'destination-dates';
+      dates.textContent = `${formatDate(dest.arrivalDate)} — ${formatDate(dest.departureDate)}`;
+      header.appendChild(dates);
+
+      const btnRemoveDest = document.createElement('button');
+      btnRemoveDest.className = 'btn-small';
+      btnRemoveDest.textContent = 'Remove Destination';
+      btnRemoveDest.title = `Remove destination ${dest.name}`;
+      btnRemoveDest.addEventListener('click', () => {
+        if (confirm(`Are you sure you want to remove destination "${dest.name}"?`)) {
+          destinations = destinations.filter(d => d.id !== dest.id);
+          saveData();
+          renderDestinations();
+        }
+      });
+      header.appendChild(btnRemoveDest);
+
+      destEl.appendChild(header);
+
+      // Activities list
+      const activitiesList = document.createElement('ul');
+      activitiesList.className = 'activities-list';
+      activitiesList.setAttribute('aria-label', `Activities for ${dest.name}`);
+      dest.activities.forEach(act => {
+        const actLi = document.createElement('li');
+        actLi.className = 'activity-item';
+        actLi.setAttribute('data-activity-id', act.id);
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'activity-info';
+
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'activity-time';
+        timeSpan.textContent = act.time;
+        infoDiv.appendChild(timeSpan);
+
+        const descSpan = document.createElement('span');
+        descSpan.textContent = act.description;
+        infoDiv.appendChild(descSpan);
+
+        if (act.notes.trim()) {
+          const notesDiv = document.createElement('div');
+          notesDiv.style.fontSize = '0.85rem';
+          notesDiv.style.color = '#555';
+          notesDiv.textContent = `Notes: ${act.notes}`;
+          infoDiv.appendChild(notesDiv);
+        }
+
+        actLi.appendChild(infoDiv);
+
+        // Activity buttons: Edit, Remove
+        const btnEditAct = document.createElement('button');
+        btnEditAct.className = 'btn-small';
+        btnEditAct.textContent = 'Edit';
+        btnEditAct.title = `Edit activity "${act.description}"`;
+        btnEditAct.addEventListener('click', () => {
+          openEditActivityModal(dest.id, act.id);
+        });
+        actLi.appendChild(btnEditAct);
+
+        const btnRemoveAct = document.createElement('button');
+        btnRemoveAct.className = 'btn-small';
+        btnRemoveAct.textContent = 'Remove';
+        btnRemoveAct.title = `Remove activity "${act.description}"`;
+        btnRemoveAct.addEventListener('click', () => {
+          if (confirm(`Remove activity "${act.description}"?`)) {
+            dest.activities = dest.activities.filter(a => a.id !== act.id);
+            saveData();
+            renderDestinations();
+          }
+        });
+        actLi.appendChild(btnRemoveAct);
+
+        activitiesList.appendChild(actLi);
+      });
+      destEl.appendChild(activitiesList);
+
+      // Add activity form for this destination
+      const addActForm = document.createElement('form');
+      addActForm.setAttribute('aria-label', `Add activity for destination ${dest.name}`);
+      addActForm.style.marginTop = '1rem';
+      addActForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(addActForm);
+        const time = (formData.get('activityTime') as string).trim();
+        const description = (formData.get('activityDesc') as string).trim();
+        const notes = (formData.get('activityNotes') as string).trim();
+
+        if (!time || !description) {
+          alert('Please enter both time and description for the activity.');
+          return;
+        }
+        const newActivity: Activity = {
+          id: generateId(),
+          time,
+          description,
+          notes,
+        };
+        dest.activities.push(newActivity);
+        // Sort activities by time
+        dest.activities.sort((a, b) => a.time.localeCompare(b.time));
+        saveData();
+        renderDestinations();
+      });
+
+      addActForm.innerHTML = `
+        <label style="flex-grow: 2; min-width: 160px;">
+          Time
+          <input type="time" name="activityTime" required />
+        </label>
+        <label style="flex-grow: 6; min-width: 200px;">
+          Description
+          <input type="text" name="activityDesc" required placeholder="e.g. Visit Louvre Museum" />
+        </label>
+        <label style="flex-grow: 8; min-width: 200px;">
+          Notes (optional)
+          <input type="text" name="activityNotes" placeholder="e.g. Book tickets in advance" />
+        </label>
+        <button type="submit" style="flex-grow: 1; min-width: 100px;">Add</button>
+      `;
+
+      destEl.appendChild(addActForm);
+
+      // Notes textarea for the destination
+      const notesLabel = document.createElement('label');
+      notesLabel.style.display = 'block';
+      notesLabel.style.marginTop = '1rem';
+      notesLabel.style.fontWeight = '600';
+      notesLabel.textContent = 'Destination Notes:';
+      destEl.appendChild(notesLabel);
+
+      const notesTextarea = document.createElement('textarea');
+      notesTextarea.className = 'notes-textarea';
+      notesTextarea.value = dest.notes || '';
+      notesTextarea.placeholder = 'Add any personal notes or reminders for this destination...';
+      notesTextarea.addEventListener('input', (e) => {
+        dest.notes = (e.target as HTMLTextAreaElement).value;
+        saveData();
+      });
+
+      destEl.appendChild(notesTextarea);
+
+      // Weather info container (will load asynchronously)
+      const weatherDiv = document.createElement('div');
+      weatherDiv.className = 'weather-info';
+      weatherDiv.textContent = 'Loading weather forecast...';
+      destEl.appendChild(weatherDiv);
+
+      // Load weather forecast
+      loadWeatherForecast(dest.name, dest.arrivalDate, weatherDiv);
+
+      destinationsListEl.appendChild(destEl);
+    });
+  }
+
+  // Modal for editing activity
+  let editModalEl: HTMLElement | null = null;
+  function openEditActivityModal(destinationId: string, activityId: string) {
+    if (editModalEl) return; // modal already open
+
+    const dest = destinations.find(d => d.id === destinationId);
+    if (!dest) return;
+    const act = dest.activities.find(a => a.id === activityId);
+    if (!act) return;
+
+    editModalEl = document.createElement('div');
+    editModalEl.style.position = 'fixed';
+    editModalEl.style.top = '0';
+    editModalEl.style.left = '0';
+    editModalEl.style.width = '100vw';
+    editModalEl.style.height = '100vh';
+    editModalEl.style.backgroundColor = 'rgba(0,0,0,0.5)';
+    editModalEl.style.display = 'flex';
+    editModalEl.style.justifyContent = 'center';
+    editModalEl.style.alignItems = 'center';
+    editModalEl.style.zIndex = '9999';
+
+    const modalContent = document.createElement('form');
+    modalContent.style.background = 'white';
+    modalContent.style.padding = '1.5rem';
+    modalContent.style.borderRadius = '8px';
+    modalContent.style.width = '300px';
+    modalContent.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    modalContent.innerHTML = `
+      <h3>Edit Activity</h3>
+      <label style="display:block; margin-top:0.5rem;">
+        Time
+        <input name="editTime" type="time" required value="${act.time}" />
+      </label>
+      <label style="display:block; margin-top:0.5rem;">
+        Description
+        <input name="editDesc" type="text" required value="${act.description}" />
+      </label>
+      <label style="display:block; margin-top:0.5rem;">
+        Notes
+        <textarea name="editNotes" rows="3">${act.notes}</textarea>
+      </label>
+      <div style="margin-top:1rem; display:flex; justify-content:flex-end; gap: 0.5rem;">
+        <button type="button" id="cancelEdit">Cancel</button>
+        <button type="submit">Save</button>
+      </div>
+    `;
+    modalContent.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const time = (modalContent.elements.namedItem('editTime') as HTMLInputElement).value.trim();
+      const desc = (modalContent.elements.namedItem('editDesc') as HTMLInputElement).value.trim();
+      const notes = (modalContent.elements.namedItem('editNotes') as HTMLTextAreaElement).value.trim();
+      if (!time || !desc) {
+        alert('Please fill in time and description.');
+        return;
+      }
+      act.time = time;
+      act.description = desc;
+      act.notes = notes;
+      // sort activities by time after edit
+      dest.activities.sort((a, b) => a.time.localeCompare(b.time));
+      saveData();
+      renderDestinations();
+      closeEditModal();
+    });
+
+    modalContent.querySelector('#cancelEdit')!.addEventListener('click', () => {
+      closeEditModal();
+    });
+
+    editModalEl.appendChild(modalContent);
+    document.body.appendChild(editModalEl);
+  }
+
+  function closeEditModal() {
+    if (editModalEl) {
+      document.body.removeChild(editModalEl);
+      editModalEl = null;
+    }
+  }
+
+  // Load weather forecast (stub with real API instructions)
+  async function loadWeatherForecast(location: string, dateISO: string, container: HTMLElement) {
+    // For demo, use Open-Meteo free API (no API key needed) for daily weather
+    // Convert date ISO to unix timestamp
+    const date = new Date(dateISO);
+    const formattedDate = date.toISOString().slice(0,10); // yyyy-mm-dd
+
+    // Geocoding API: Use Open-Meteo's public geocoding
+    try {
+      const geoResp = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1`
+      );
+      const geoData = await geoResp.json();
+      if (!geoData.results || geoData.results.length === 0) {
+        container.textContent = 'Weather: Location not found.';
+        return;
+      }
+      const { latitude, longitude } = geoData.results[0];
+      // Fetch weather forecast for the date
+      const weatherResp = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,weathercode&start_date=${formattedDate}&end_date=${formattedDate}&timezone=auto`
+      );
+      const weatherData = await weatherResp.json();
+      if (!weatherData || !weatherData.daily || !weatherData.daily.temperature_2m_max) {
+        container.textContent = 'Weather: Forecast data not available.';
+        return;
+      }
+      const maxTemp = weatherData.daily.temperature_2m_max[0];
+      const minTemp = weatherData.daily.temperature_2m_min[0];
+      const weatherCode = weatherData.daily.weathercode[0];
+      const weatherDesc = weatherCodeMapping(weatherCode);
+      container.textContent = `Weather forecast: ${weatherDesc}, Temp: ${minTemp}°C - ${maxTemp}°C`;
+    } catch {
+      container.textContent = 'Weather: Unable to load forecast.';
+    }
+  }
+
+  // Basic weather code mapping Open-Meteo
+  function weatherCodeMapping(code: number): string {
+    switch(code) {
+      case 0: return 'Clear sky';
+      case 1: case 2: case 3: return 'Partly cloudy';
+      case 45: case 48: return 'Fog';
+      case 51: case 53: case 55: return 'Drizzle';
+      case 61: case 63: case 65: return 'Rain';
+      case 71: case 73: case 75: return 'Snow';
+      case 80: case 81: case 82: return 'Rain showers';
+      case 95: case 96: case 99: return 'Thunderstorm';
+      default: return 'Unknown weather';
+    }
+  }
+
+  // Handle adding new destination
+  addDestinationForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = destinationNameInput.value.trim();
+    const arrival = arrivalDateInput.value;
+    const departure = departureDateInput.value;
+
+    if (!name || !arrival || !departure) {
+      alert('Please fill in all destination fields.');
+      return;
+    }
+    if (departure < arrival) {
+      alert('Departure date cannot be before arrival date.');
+      return;
+    }
+
+    destinations.push({
+      id: generateId(),
+      name,
+      arrivalDate: arrival,
+      departureDate: departure,
+      activities: [],
+      notes: '',
+    });
+    destinationNameInput.value = '';
+    arrivalDateInput.value = '';
+    departureDateInput.value = '';
+    saveData();
+    renderDestinations();
+  });
+
+  // Initial load
+  loadData();
+  renderDestinations();
+
+</script>
+</body>
+</html>
+
