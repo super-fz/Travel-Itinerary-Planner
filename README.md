@@ -16,7 +16,7 @@ Tech Stack:
 
 Built with <b>TypeScript</b> to:
 
-Define clear data models for trips, destinations, activities, and dates with TypeScript interfaces.
-Manage UI state and event handling with strong typing to reduce runtime errors.
-Enhance maintainability, type safety and scalability for future features like sharing itineraries or syncing with calendars.
-Build a reactive, user-friendly interface with TypeScript and native DOM APIs or lightweight
+<li>Define clear data models for trips, destinations, activities, and dates with TypeScript interfaces.</li>
+<li>Manage UI state and event handling with strong typing to reduce runtime errors.</li>
+<li>Enhance maintainability, type safety and scalability for future features like sharing itineraries or syncing with calendars.</li>
+<li>Build a reactive, user-friendly interface with TypeScript and native DOM APIs or lightweight</li>
